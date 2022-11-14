@@ -1,0 +1,41 @@
+---
+title: "Data wrangling exercises with data.table"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## What are we going to work on?
+
+These exercises should give you a general glimpse on the main operations and functionalities of data.table. While the package is knowing for its speed and efficiency, there are many operations that come with the package that make it also easier to work/compute and code in R.
+
+The following exercises are divided into three levels:
+
+I. Basic operations with data.table
+II. Computing with data.table operations
+III. Advanced coding with data.table
+
+Don't worry about the last part, you are all in the advanced part by now in R :)
+
+If you have any difficulties catching up with the exercises, you can find in the repo a cheatsheet with the solutions of each exercise...but try to do this on your own and bring new code to our environment.
+
+Enjoy!
+
+I.1. Load the data and convert it to data.table:
+```{r}
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
