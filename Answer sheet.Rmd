@@ -1,0 +1,104 @@
+---
+title: "Solutions sheet"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Let's go through it together one by one :)
+
+## 1. Load the data.table package and the nycflights13. Below you will see the assigning code as the nycflights13 package consists of several datasets. Before running the code, write code that converts each dataset to data.table:
+```{r}
+
+library("data.table")
+library(nycflights13)
+
+airports_data <- data.table(airports)
+flights_data <- data.table(flights)
+planes_data <- data.table(planes)
+```
+
+
+## 2a. Select rows 40 to 95 from flights_data:
+
+
+```{r}
+flights_data [40:95]
+
+```
+
+
+## 2b. Select all rows from flight_data that have an air time lower than 100, then rename air_time to flight_time by using the chaining operation and return it as a list:
+
+
+```{r}
+flights_data[(air_time) <100][, .(flight_time = air_time)]
+
+```
+
+
+## 2c. From which origin where the most frequent flights in flights_data? return the answer as data.table:
+
+
+```{r}
+flights_data[, .N, by = .(origin)]
+
+```
+
+
+## 3a. Add a new column calculating the average air_time for the flights from each origin (careful with the na-s):
+
+
+```{r}
+clean_flights<- na.omit(flights_data)
+clean_flights[, mean(air_time), by = .(origin)]
+
+```
+
+
+## 3b. Using the %inbetween% operation, check which manifacturer produces planes with a number of seats between 50-100, and then calculate the average of the seats these planes have: 
+
+
+```{r}
+planes_data[seats %between% c(50, 100), mean(seats), by = .(manufacturer)]
+
+```
+
+
+## 3c. Use inrange() to extract the flights that had a distance either below 500 or above 1000 in flights_data:
+
+
+```{r}
+flights_data[distance %inrange% list(c(0,500), c(1000, Inf))]
+```
+
+
+## 4a. Find how many flights arrived on time / how mamy flights had the same arrival time as the scheduled one?
+
+
+```{r}
+
+flights_data[, .(arr_time == sched_arr_time)]
+
+```
+
+
+## 4b.Find the most frequent departure time from the carriers in flights_data (careful with na-s!):
+
+
+```{r}
+frequent_dep<- flights_data[, .N, by = .(carrier, dep_time)][order(N, decreasing = TRUE)]
+na.omit(frequent_dep)
+```
+
+
+## 4c.Using .SD, find which carrier had the longest airtime at flights_data:
+
+
+```{r}
+flights_data[ , .SD[which.max(air_time)], by = carrier]
+```
+
