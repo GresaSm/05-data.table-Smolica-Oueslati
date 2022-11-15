@@ -7,24 +7,24 @@ This repository provides materials for a session that is part of the [I2DS Tools
 
 ### Session contents
 
-This session will introduce you to the modern data wrangling workflow with R and dplyr. Data wrangling is one of the core steps in the data science workflow. dplyr is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges, including the manipulation of datasets and variables. 
+This session will help you dive into data wrangling with data.tables. Data wrangling is one of the main steps we work on in data science, and efficiency is always the needed approach! data.table allows you to code and operate fast and more efficiently. data.table is very fast and memory efficient while performing file reading and writing, aggregations, updates, range and interval joins etc. on big datasets in R programming.
 
 ### Main learning objectives
 
-The goals of this session are to (1) equip you with conceptual knowledge about the dplyr package and data wrangling workflow, (2) show you the three key verbs of the pacakge, and (3) provide you with practice material as well as some further readings.
+The goals of this session are to (1) Grasp the use cases and strengths of data.table, (2) Understand data.table general semantics, (3) Learn to use data.table across different data wrangling tasks, (4) Practically apply what you learn through exercises, and provide you with useful learning material to conitnue your learning journey!
 
 
 ## Instructors
 
-- Gresa Smolica ([website](http://simonmunzert.github.io/), [twitter](https://twitter.com/simonsaysnothin))
+- Gresa Smolica ([website](https://github.com/GresaSm), [linkedin](https://www.linkedin.com/in/gresa-smolica-6528311b6/))
 - Amin Oueslati ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))
 
 
 ## Further resources
 
-- [dplyr overview at dplyr.tidyverse.org](https://dplyr.tidyverse.org/)
-- [Hands-on dplyr tutorial by Data School on YouTube](https://www.youtube.com/watch?v=jWjqLW-u3hc)
-- [R for Data Science book - part on data wrangling](https://r4ds.had.co.nz/wrangle-intro.html)
+- [data.table overview at cran.r-project](https://cran.r-project.org/web/packages/data.table/data.table.pdf)
+- [DataCamp R For Data Science data.table Cheat Sheet](shorturl.at/anpz7)
+- [Youtube tutorial: data.table in R](https://www.youtube.com/watch?v=1R5ljPBkVnE)
 
 
 ## License
@@ -33,6 +33,6 @@ The material in this repository is made available under the [MIT license](http:/
 
 ## Statement of contributions
 
-**Gresa Smolica** prepared the practice material and post-processed the recording.
+**Gresa Smolica** prepared the script and practice materials. 
 
-**Amin Oueslati** prepared the presentation slides and recording. He also provided an example to the practice material.
+**Amin Oueslati** prepared the presentation slides, and supported finalizing the exercise materials.
