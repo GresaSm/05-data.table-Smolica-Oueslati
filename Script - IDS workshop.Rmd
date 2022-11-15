@@ -40,7 +40,6 @@ start <- Sys.time()
 dt <- fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
 end <- Sys.time()
 print(end - start)
-
 ```
 
 ## Wrangling data at scale with data.table
@@ -55,17 +54,16 @@ load_student("2018")
 
 # load the school data for all years
 data("school")
-
 ```
 
 ## Now, let's convert our dataset into data.table and assign it to an object to make working with the data easier:
 
 ```{r}
+# assigning the datasets to objects
 student_data <- as.data.table(load_student("2018"))
-
 school_data <- as.data.table(school)
 
-## Let's inspect our datasets:
+## let's inspect our datasets:
 dim(student_data) # so our dataset has 612,004 rows/observations and 22 columns/variables. Awesome!
 dim(school_data) # 109,756 rows and 13 columns. Great!
 ```
@@ -81,8 +79,9 @@ DT[i, # where i shows "on which rows"
 ## Subsetting rows - working with "i" in data.table: Subsetting with data.table is quite straightforward. Let's say we want to subset all male students in Albania
 
 ```{r}
-## Sub-set all male students from Albania
-male_albanian_studens <- student_data[country == "ALB" & gender == "male"]
+## sub-set all male students from Albania
+male_albanian_students <- student_data[country == "ALB" & gender == "male"]
+male_albanian_students
 
 ## as you can see, a comma after the condition in "i"is not required
 ## but student_data[country == "ALB" & gender == "male",] would work just fine
@@ -90,13 +89,13 @@ male_albanian_studens <- student_data[country == "ALB" & gender == "male"]
 ## Ordering rows in increasing or decreasing order | the power of (-) in data.table
 
 ```{r}
-## Order students in increasing order by their math score
+## order students in increasing order by their math score
 incr_order <- male_albanian_students[order(math)]
 incr_order[1:5]
 ```
 
 ```{r}
-## Order students in decreasing order by their math score
+## order students in decreasing order by their math score
 decr_ord <- male_albanian_students[order(-math)]
 decr_ord[1:5]
 ```
@@ -105,19 +104,21 @@ decr_ord[1:5]
 
 ```{r}
 ## when used with a scalar, %between% and %inrange% perform identically
-between_scaler <- male_albanian_studens[math %between% c(500, 600)]
-inrange_scaler <- male_albanian_studens[math %inrange% c(500, 600)]
+between_scaler <- male_albanian_students[math %between% c(500, 600)]
+inrange_scaler <- male_albanian_students[math %inrange% c(500, 600)]
 length(between_scaler) == length(inrange_scaler)
 
 ## using %between% and %inrange% with vectors
 
-# %between% evaluates each row and returns T/F if the value of interest falls between the two vectors - the range defined by the two vectors varies for each row 
+# %between% evaluates each row and returns T/F if the value of interest falls between the two vectors - the range defined by the two vectors varies for each row
+# check whether the math score of a given students falls between his/her reading and science score
 between_vector <- male_albanian_studens[math %between% list(science, read)]
 between_vector # 188 rows, more stringent selection criterion
 
 # %inrange% takes the minimum from the lower-bound (first vector) and the maximum from the upper-bound (second vector), forms a static range and then evaluates whether the value in a given row falls within this range
+# check whether the math score of a given student falls between the lowest science and highest reading score of ALL students
 inrange_vector <- male_albanian_studens[math %inrange% list(science, read)]
-inrange_vector # 3,182 rows, more relaxed criterion
+inrange_vector # 3,182 rows, all students in the dataset
 ```
 
 
@@ -126,9 +127,11 @@ inrange_vector # 3,182 rows, more relaxed criterion
 ```{r}
 # returning a vector
 student_id_vector <- student_data[, student_id] 
+student_id_vector
 
 # returning a data.table, wrapping with list()
 select_columns <- student_data[, list(student_id, country, gender, read, science)]
+select_columns
 
 # returning a data.table, wrapping with .()
 select_columns <- student_data[,.(student_id, country, gender, read, science)] 
@@ -149,10 +152,9 @@ head(renamed_cols)
 ## Creating new columns with data.table: 
 
 ```{r}
-# creating a new column
+# creating a new column which combines the reading and science scores
 total_score <- male_albanian_students[, 
   total_score := read + science]
-
 total_score
 ```
 
@@ -162,7 +164,6 @@ total_score
 # creating multiple new columns
 multiple_columns <- school_data[ , `:=` (
   total_fun = fund_gov + fund_fees + fund_donation,  total_students = enrol_boys + enrol_girls)]
-
 multiple_columns
 ```
 
@@ -184,7 +185,7 @@ min_girls
 more_boys_than_girls <- clean_school_data[, sum(enrol_boys < enrol_girls)]
 more_boys_than_girls
 
-#further sub-setting and computing:
+# further sub-setting and computing:
 subseting_computing <- clean_school_data[country== "FRA" & year == 2018, sum(total_students)]
 ```
 
@@ -203,11 +204,12 @@ clean_school_data[country== "FRA" & year == 2018, .N]
 ## Grouping with "by". By allows us to perform operations by group. We are not limited to a single group, but can specify several groups.
 
 ```{r}
-# getting the total numbers
+# getting the total number of schools by country
 group_country <- school_data[, .(.N), by = .(country)]
 group_country
 
 # conditional grouping: by also accepts conditional expressions, i.e., create groups around conditions. The outcome is a matrix which shows all possible true/false combinations
+# compute the mean staff shortage for Albanian schools differentiated by (i) whether more than 50% of their funding comes from donations, (ii) whether a school's total number of students is below 500
 by_condition <- clean_school_data[country == "ALB",
         .(mean(staff_shortage)),
         by = .(fund_donation > 50, total_students < 500)]
@@ -223,7 +225,8 @@ cols_rows <- clean_school_data[country == "FRA" & year == 2018,
                .(m_total = mean(total_students), m_fun = mean(total_fun))]
 cols_rows
 
-# combining all the operations we learnt so far:
+# combining all the operations we learnt so far
+# compute the mean number of enrolled boys and girls in schools in Kazakhstan, grouped by year and private/public status 
 all_combined <- clean_school_data[country == "KAZ",
         .(mean(enrol_boys), mean(enrol_girls)),
         by = .(year, public_private)]
@@ -235,6 +238,7 @@ all_combined
 
 ```{r}
 # repeated operations with .SD, .SDcols and lapply
+# compute the mean of enrolled boys, enrolled girls and the share of funding from student fees (full percentage points) across countries in 2018
 mean_columns <- c("enrol_boys", "enrol_girls", "fund_fees") 
 # specifying the columns to iterate over
 selected_means <- clean_school_data[year == 2018,        
@@ -254,7 +258,8 @@ DT[...
       ][...
         ]
 
-# chaining: computing the mean staff shortage by country and then ordering the result in decreasing order
+# chaining operations together
+# computing the mean staff shortage by country and then ordering the result in decreasing order
 chaining <- clean_school_data[,
                               .(staff_shortage = mean(staff_shortage)), 
                               by = .(country)
