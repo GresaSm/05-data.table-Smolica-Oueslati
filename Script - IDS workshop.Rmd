@@ -243,8 +243,8 @@ all_combined
 # What if we need to repeat an operation across many columns, like finding the mean? Is there a way to calculate the mean for several columns at once? Yes, we can subset each column with .SD, and then compute the mean with with lapply. .SD is particularly useful in the context of grouping, where it refers to each of these sub-data.tables, one-at-a-time. If we want to limit the column-wise computation to selected columns only (e.g., only numerical ones), we specify these through .SDcols
 
 ```{r}
-
 # repeated operations with .SD, .SDcols and lapply
+# compute the mean numbers of enrolled boys, enrolled girls and share of funding from student fees by country in 2018
 mean_columns <- c("enrol_boys", "enrol_girls", "fund_fees") 
 # specifying the columns to iterate over
 selected_means <- clean_school_data[year == 2018,        
@@ -252,10 +252,6 @@ selected_means <- clean_school_data[year == 2018,
         by = .(country),           
         .SDcols = mean_columns]   
 selected_means
-
-
-# compute the mean of enrolled boys, enrolled girls and the share of funding from student fees (full percentage points) across countries in 2018
-
 ```
 
 ## Chaining in data.table
