@@ -9,11 +9,16 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## You will need the following packages for this practice session
+```{r}
+pacman::p_load(data.table, learningtower, tidyverse)
+```
+```
+
 ## Before we start, what is that fuss about data.table's speed? - Let's see: 
 (example extracted by "EDAV Fall 2021 Tues/Thurs Community Contributions")
 ```{r}
 ## read a csv into a data.frame
-
 start <- Sys.time()
 df <- read.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
 end <- Sys.time()
@@ -23,19 +28,14 @@ print(end - start)
 
 ```{r}
 ## reading a csv into a tibble
-
-pacman::p_load(data.table, learningtower, tidyverse)
-
 start <- Sys.time()
 tb <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
 end <- Sys.time()
 print(end - start)
-
 ```
 
 ```{r}
 # reading a csv into a data.table
-
 start <- Sys.time()
 dt <- fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
 end <- Sys.time()
@@ -47,8 +47,6 @@ print(end - start)
 To start getting into data.table and its operations, first we need to install and load the data.table package and the learningtower package - which provide easy access to a subset of variables from the infamous PISA study, covering the the years 2000 - 2018. The data collection was orchestrated by the OECD. In this workshop we will use both the student and the school dataset. While the former contains data at the student-level, the latter has schools as units of observation.
 
 ```{r}
-pacman::p_load(data.table, learningtower, tidyverse)
-
 # load the student data for 2018
 load_student("2018")
 
