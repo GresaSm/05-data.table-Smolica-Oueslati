@@ -10,7 +10,7 @@ This session will help you dive into data wrangling with data.table. data.table 
 
 ### Main learning objectives
 
-There are 5 learning objectives for this session. (1) Grasp the use cases and strengths of data.table, (2) Understand data.table general semantics, (3) Learn to use data.table across different data wrangling tasks, (4) Practically apply what you learn through exercises, (5) Know how to independently continue your learning journey
+There are 5 learning objectives for this session. (1) Grasp the use cases and strengths of data.table, (2) Understand data.table general semantics, (3) Learn to use data.table across different data wrangling tasks, (4) Practically apply what you learnt through exercises, (5) Know how to independently continue your learning journey
 
 ## Instructors
 
