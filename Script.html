@@ -378,7 +378,7 @@ start &lt;- Sys.time()
 df &lt;- read.csv(&quot;https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv&quot;)
 end &lt;- Sys.time()
 print(end - start)</code></pre>
-<pre><code>## Time difference of 2.190797 secs</code></pre>
+<pre><code>## Time difference of 4.771703 secs</code></pre>
 <pre class="r"><code>## reading a csv into a tibble
 start &lt;- Sys.time()
 tb &lt;- read_csv(&quot;https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv&quot;)</code></pre>
@@ -392,13 +392,13 @@ tb &lt;- read_csv(&quot;https://raw.githubusercontent.com/CSSEGISandData/COVID-1
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 <pre class="r"><code>end &lt;- Sys.time()
 print(end - start)</code></pre>
-<pre><code>## Time difference of 1.706036 secs</code></pre>
+<pre><code>## Time difference of 13.58674 secs</code></pre>
 <pre class="r"><code># reading a csv into a data.table
 start &lt;- Sys.time()
 dt &lt;- fread(&quot;https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv&quot;)
 end &lt;- Sys.time()
 print(end - start)</code></pre>
-<pre><code>## Time difference of 0.5983009 secs</code></pre>
+<pre><code>## Time difference of 2.026408 secs</code></pre>
 </div>
 <div id="wrangling-data-at-scale-with-data.table" class="section level4">
 <h4>Wrangling data at scale with data.table</h4>
