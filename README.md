@@ -20,7 +20,7 @@ There are 5 learning objectives for this session. (1) Grasp the use cases and st
 ## Further resources
 
 - [data.table overview at cran.r-project](https://cran.r-project.org/web/packages/data.table/data.table.pdf)
-- [DataCamp R For Data Science data.table Cheat Sheet](shorturl.at/anpz7)
+- [DataCamp R For Data Science data.table Cheat Sheet](https://www.datacamp.com/cheat-sheet/the-datatable-r-package-cheat-sheet)
 - [Youtube tutorial: data.table in R](https://www.youtube.com/watch?v=1R5ljPBkVnE)
 
 ## License
