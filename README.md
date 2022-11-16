@@ -6,7 +6,7 @@ This repository provides materials for a session that is part of the [I2DS Tools
 
 ### Session contents
 
-This session will help you dive into data wrangling with data.table. data.table is an R package that provides an enhanced version of data.frames. Essentially, data.table is a Swiss Army Knife for the entire suit of data wrangling tasks. Importantly, data.table is extremely performance-oriented, making it fast and memory-efficient. Especially for large datasets, data.table outperforms all comparable packages. While becoming fluent in a new syntax always feels exhausting at first, it is well worth investing the time if you plan to work with big data in R. 
+This session will help you dive into data wrangling with data.table. data.table is an R package that provides an enhanced version of data.frames. Essentially, data.table is a Swiss Army Knife for the entire suit of data wrangling tasks. Importantly, data.table is extremely performance-oriented, making it fast and memory-efficient. Especially for large datasets, data.table outperforms all comparable packages. In the session, we will introduce the mechanics of data.table along a logical sequence of data wrangling tasks. While a new syntax can always seem intimidating at first, it is well worth picking up some data.table basics if you plan to work with big data in R.  
 
 ### Main learning objectives
 
