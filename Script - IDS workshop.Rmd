@@ -14,9 +14,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE) #
-
-pacman::p_load(data.table, learningtower, tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ***
@@ -75,7 +73,7 @@ data("school")
 student_data <- as.data.table(load_student("2018"))
 school_data <- as.data.table(school)
 
-## let's inspect our datasets:
+# let's inspect our datasets
 dim(student_data) # so our dataset has 612,004 rows/observations and 22 columns/variables. Awesome!
 dim(school_data) # 109,756 rows and 13 columns. Great!
 ```
@@ -93,24 +91,24 @@ dim(school_data) # 109,756 rows and 13 columns. Great!
 ### We subset rows by defining the corresponding condition in i
 
 ```{r}
-## sub-set all male students from Albania
+# sub-set all male students from Albania
 male_albanian_students <- student_data[country == "ALB" & gender == "male"]
 male_albanian_students
 
-## as you can see, a comma after the condition in "i"is not required
-## but student_data[country == "ALB" & gender == "male",] would work just fine
+# as you can see, a comma after the condition in "i"is not required
+# but student_data[country == "ALB" & gender == "male",] would work just fine
 ```
 
 ## Ordering rows in increasing or decreasing order | the power of (-) in data.table
 
 ```{r}
-## order students in increasing order by their math score
+# order students in increasing order by their math score
 incr_order <- male_albanian_students[order(math)]
 incr_order[1:5]
 ```
 
 ```{r}
-## order students in decreasing order by their math score
+# order students in decreasing order by their math score
 decr_ord <- male_albanian_students[order(-math)]
 decr_ord[1:5]
 ```
@@ -119,12 +117,12 @@ decr_ord[1:5]
 ### They are useful to subset rows conditional on a value falling within a certain range. The two operators accept both scalars and vectors. When used with a scalar, %between% and %inrange% perform identically However, both operators also accept vectors, in which case they operate differently.
 
 ```{r}
-## when used with a scalar, %between% and %inrange% perform identically
+# when used with a scalar, %between% and %inrange% perform identically
 between_scaler <- male_albanian_students[math %between% c(500, 600)]
 inrange_scaler <- male_albanian_students[math %inrange% c(500, 600)]
 length(between_scaler) == length(inrange_scaler)
 
-## using %between% and %inrange% with vectors
+# using %between% and %inrange% with vectors
 
 # %between% evaluates each row and returns T/F if the value of interest falls between the two vectors - the range defined by the two vectors varies for each row
 # check whether the math score of a given students falls between his/her reading and science score
@@ -216,13 +214,13 @@ subseting_computing <- clean_school_data[country== "FRA" & year == 2018, sum(tot
 ```
 
 ## Special symbol .N
-### .N returns the number of observations in the current group. N is particularly powerful when combined with grouping in "by".
+### .N returns the number of observations in the current group. .N is particularly powerful when combined with grouping in "by".
 
 ```{r}
-# this type of operation length () occurs quite frequently, especially while grouping, therefore we can do the following:
+# we can use length() to get the number of observations
 clean_school_data[country== "FRA" & year == 2018, length(school_size)] 
 
-# special operator N
+# but we can also use the special operator .N
 clean_school_data[country== "FRA" & year == 2018, .N]
 # we see that we get the same result, but with shorter code
 ```
@@ -235,8 +233,8 @@ clean_school_data[country== "FRA" & year == 2018, .N]
 group_country <- school_data[, .(.N), by = .(country)]
 group_country
 
-# conditional grouping: by also accepts conditional expressions, i.e., create groups around conditions. The outcome is a matrix which shows all possible true/false combinations
-# compute the mean staff shortage for Albanian schools differentiated by (i) whether more than 50% of their funding comes from donations, (ii) whether a school's total number of students is below 500
+# conditional grouping: "by" also accepts conditional expressions, i.e., create groups around conditions. The outcome is a matrix which shows all possible true/false combinations
+# compute the mean staff shortage for Albanian schools differentiated by (i) whether more than 50% of a school's funding comes from donations, (ii) whether a school's total number of students is below 500
 by_condition <- clean_school_data[country == "ALB",
         .(mean(staff_shortage)),
         by = .(fund_donation > 50, total_students < 500)]
