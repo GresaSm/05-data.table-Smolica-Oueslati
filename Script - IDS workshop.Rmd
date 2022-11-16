@@ -10,26 +10,28 @@ output:
     theme: lumen
     toc_depth: 3
     toc_float: true
-    css: custom.css 
     self_contained: false
-    includes:
-      after_body: footer.html
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE) #
 
-install.packages("devtools")
-devtools::install_github("hadley/emo")
+pacman::p_load(data.table, learningtower, tidyverse)
 ```
+
 ***
 
-Before we start, what are we actually telling you about data.table speed? - Let's see: 
-(example extracted by "EDAV Fall 2021 Tues/Thurs Community Contributions")
+## Let's start by installing/loading all the packages we need.
+
+```{r}
+pacman::p_load(data.table, learningtower, tidyverse)
+```
+
+### Before we start, let's go back to our claims regarding data.table's speed? You don't believe us? See for yourself!
+### The examplary data is extracted from "EDAV Fall 2021 Tues/Thurs Community Contributions
 
 ```{r}
 ## read a csv into a data.frame
-
 start <- Sys.time()
 df <- read.csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
 end <- Sys.time()
@@ -39,7 +41,6 @@ print(end - start)
 
 ```{r}
 ## reading a csv into a tibble
-
 start <- Sys.time()
 tb <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
 end <- Sys.time()
@@ -49,7 +50,6 @@ print(end - start)
 
 ```{r}
 # reading a csv into a data.table
-
 start <- Sys.time()
 dt <- fread("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv")
 end <- Sys.time()
@@ -58,11 +58,9 @@ print(end - start)
 
 # Wrangling data at scale with data.table `r emo::ji(':wrench:')`
 
-## To start getting into data.table and its operations, first we need to install and load the data.table package and the learningtower package - which provides easy access to a subset of variables from PISA data collected from the OECD, for the years 2000 - 2018. In this workshop we will use both student and school datasets. While the former contains data at the student-level, the latter has schools as units of observation.
+### To start getting into data.table and its operations, first we need to install and load the data.table package and the learningtower package - which provides easy access to a subset of variables from the PISA educational study for the years 2000-2008. The data collection is orchestrated by the OECD. In this workshop we will use both the student and school dataset. While the former contains data at the student-level, the latter has schools as its units of observation.
 
 ```{r}
-pacman::p_load(data.table, learningtower, tidyverse)
-
 # load the student data for 2018
 load_student("2018")
 
@@ -70,7 +68,7 @@ load_student("2018")
 data("school")
 ```
 
-## Now, let's convert our dataset into data.table and assign it to an object to make working with the data easier:
+### Now, let's convert our dataset into data.table and assign it to an object to make our life easier:
 
 ```{r}
 # assigning the datasets to objects
@@ -82,15 +80,17 @@ dim(student_data) # so our dataset has 612,004 rows/observations and 22 columns/
 dim(school_data) # 109,756 rows and 13 columns. Great!
 ```
 
-## Before we get into the wrangling, we need to keep in mind, data.table works through the following grammar:
+## Before we get into the wrangling, we should remind ourselves that data.table works through the following syntax:
 
-DT[i, # where i shows "on which rows"
-   j, # where j tells "what to do"
-   by] # where by means "grouped by what?"
+### DT[i, # where i shows "on which rows"
+###   j, # where j indicates "what to do"
+###   by] # where by means "grouped by what?"
 
 ## Now, let's wrangle that data! `r emo::ji(':computer:')`
 
-## Subsetting rows - working with "i" in data.table: Subsetting with data.table is quite straightforward. ###Let's say we want to subset all male students in Albania:
+## Sub-setting rows: 
+### Tidyverse equivalent: filter
+### We subset rows by defining the corresponding condition in i
 
 ```{r}
 ## sub-set all male students from Albania
@@ -115,7 +115,8 @@ decr_ord <- male_albanian_students[order(-math)]
 decr_ord[1:5]
 ```
 
-## Special operator %between% and %inrange%. They are useful to subset rows conditional on a value falling within a certain range. The two operators accept both scalars and vectors. When used with a scalar, %between% and %inrange% perform identically However, both operators also accept vectors, in which case the operate differently.
+## Special operator %between% and %inrange%:
+### They are useful to subset rows conditional on a value falling within a certain range. The two operators accept both scalars and vectors. When used with a scalar, %between% and %inrange% perform identically However, both operators also accept vectors, in which case they operate differently.
 
 ```{r}
 ## when used with a scalar, %between% and %inrange% perform identically
@@ -127,17 +128,18 @@ length(between_scaler) == length(inrange_scaler)
 
 # %between% evaluates each row and returns T/F if the value of interest falls between the two vectors - the range defined by the two vectors varies for each row
 # check whether the math score of a given students falls between his/her reading and science score
-between_vector <- male_albanian_studens[math %between% list(science, read)]
+between_vector <- male_albanian_students[math %between% list(science, read)]
 between_vector # 188 rows, more stringent selection criterion
 
 # %inrange% takes the minimum from the lower-bound (first vector) and the maximum from the upper-bound (second vector), forms a static range and then evaluates whether the value in a given row falls within this range
 # check whether the math score of a given student falls between the lowest science and highest reading score of ALL students
-inrange_vector <- male_albanian_studens[math %inrange% list(science, read)]
-inrange_vector # 3,182 rows, all students in the dataset
+inrange_vector <- male_albanian_students[math %inrange% list(science, read)]
+inrange_vector # 3,182 rows, all but one student from the dataset, who falls outside range
 ```
 
-
-## Dealing with columns in data.table - working with "j". The logic is fairly straightforward, but there are two things to keep in mind: First, if we don't wrap j, R returns a vector. Second, if we want R to return a data.table (most of the time this is what we want!) we need to wrap j, either with list() or shorter .(). Let's see how both of the look:
+## Extracting or modifying columns: 
+### Tidyverse equivalent: select
+### The logic is fairly straightforward. The main thing to keep in mind is, that if we don't wrap j, R will return a vector. If we want a data.table instead (most of the time this is what we want!) we need to wrap j, either with list() or with .(). Generally, you will see .() more commonly as its shorter. 
 
 ```{r}
 # returning a vector
@@ -157,14 +159,17 @@ select_columns_short <- select_columns[, !c("read", "science")]
 select_columns_short
 ```
 
-## Selecting and renaming columns with data.table:
+## Selecting and renaming columns:
 
 ```{r}
+# selecting and renaming the columns for books and socioeconomic status
 renamed_cols <- student_data[, .(books = book, socio_eco_status = escs)]
 head(renamed_cols)
 ```
 
-## Creating new columns with data.table: 
+## Creating new columns: 
+### Tidyverse equivalent: mutate
+### The := assignment symbol allows us to create new columns through the modification/combination of one ore more columns. As part of the assignment we can optionally specify the name of the new column. If we don't specify a name, the default v1, v2... will be used.
 
 ```{r}
 # creating a new column which combines the reading and science scores
@@ -182,7 +187,9 @@ multiple_columns <- school_data[ , `:=` (
 multiple_columns
 ```
 
-## Descriptive analysis with data.table 
+## Descriptive analysis:
+### Tidyverse equivalent: summarise
+### We can perform any descriptive analysis on j, such as sum, maximum, minimum. Optionally, we can assign a name to the outcome variable.
 
 ```{r}
 # first we drop na-s to make our lives easier
@@ -200,11 +207,16 @@ min_girls
 more_boys_than_girls <- clean_school_data[, sum(enrol_boys < enrol_girls)]
 more_boys_than_girls
 
-# further sub-setting and computing:
+print(paste0("School with most enrolled boys: ", max_boys))
+print(paste0("School with fewest enrolled girls ", min_girls))
+print(paste0("Number of schools with more enrolled girls than boys ", n_schools_more_girls))
+
+# sub-setting prior to a computation
 subseting_computing <- clean_school_data[country== "FRA" & year == 2018, sum(total_students)]
 ```
 
 ## Special symbol .N
+### .N returns the number of observations in the current group. N is particularly powerful when combined with grouping in "by".
 
 ```{r}
 # this type of operation length () occurs quite frequently, especially while grouping, therefore we can do the following:
@@ -212,11 +224,11 @@ clean_school_data[country== "FRA" & year == 2018, length(school_size)]
 
 # special operator N
 clean_school_data[country== "FRA" & year == 2018, .N]
-# we see that we get the same result with 16 characters less! 
-# but please keep in mind .N is a special built-in variable that holds the number of observations in the current group.
+# we see that we get the same result, but with shorter code
 ```
 
-## Grouping with "by". By allows us to perform operations by group. We are not limited to a single group, but can specify several groups:
+## Grouping with "by":
+### "By" allows us to perform operations by group. We are not limited to a single group, but can specify several groups:
 
 ```{r}
 # getting the total number of schools by country
@@ -249,14 +261,15 @@ all_combined
 # why are we seeing V1, V2?
 ```
 
-## Full-on data.table - Advanced operations `r emo::ji(':rocket:')` 
-###What if we need to repeat an operation across many columns, like finding the mean? Is there a way to calculate the mean for several columns at once? Yes, we can subset each column with .SD, and then compute the mean with with lapply. .SD is particularly useful in the context of grouping, where it refers to each of these sub-data.tables, one-at-a-time. If we want to limit the column-wise computation to selected columns only (e.g., only numerical ones), we specify these through .SDcols
+## Full-on data.table - Advanced operations: `r emo::ji(':rocket:')` 
+### What if we need to repeat an operation across many columns, like finding the mean? Is there a way to calculate the mean for several columns at once? 
+### Yes, we can subset each column with .SD, and then compute the mean with with lapply. .SD is particularly useful in the context of grouping, where it refers to each of these sub-data.tables, one-at-a-time. 
+### If we want to limit the column-wise computation to selected columns only (e.g., only numerical ones), we specify these through .SDcols. .SDcols also accepts a vector as input, which can be defined outside of data.table.  
 
 ```{r}
 # repeated operations with .SD, .SDcols and lapply
 # compute the mean of enrolled boys, enrolled girls and the share of funding from student fees (full percentage points) across countries in 2018
-mean_columns <- c("enrol_boys", "enrol_girls", "fund_fees") 
-# specifying the columns to iterate over
+mean_columns <- c("enrol_boys", "enrol_girls", "fund_fees") # specifying the columns to iterate over
 selected_means <- clean_school_data[year == 2018,        
         lapply(.SD, mean),                    
         by = .(country),           
@@ -264,18 +277,16 @@ selected_means <- clean_school_data[year == 2018,
 selected_means
 ```
 
-## Chaining in data.table: 
-###To avoid saving intermediate results, data.table uses chaining (pipe-operator in tidyverse). The syntax can be read as ‘result from first []-operation is used in subsequent []-operation’. Chaining vertically enhances readability
+## Chaining:
+## Tidyverse equivalent: piping
+### To avoid saving intermediate results, data.table uses chaining. The syntax can be read as ‘result from first []-operation is used in subsequent []-operation’. Chaining vertically enhances readability.
 
+### DT[...
+###    ][...
+###      ][...
+###        ]
 
 ```{r}
-# chaining vertically as best practice
-DT[...
-    ][...
-      ][...
-        ]
-
-# chaining operations together
 # computing the mean staff shortage by country and then ordering the result in decreasing order
 chaining <- clean_school_data[,
                               .(staff_shortage = mean(staff_shortage)), 
