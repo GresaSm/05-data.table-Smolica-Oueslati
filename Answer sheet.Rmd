@@ -22,13 +22,14 @@ install.packages("devtools")
 devtools::install_github("hadley/emo")
 ```
 ***
+
 # Let's go through it together one by one `r emo::ji(':blush:')`
 
-## 1a. Load the data.table package and the nycflights13. Below you will see the assigning codes as the nycflights13 package consists of several datasets. Before running the code, write code that converts each dataset to data.table:
-```{r}
+## 1a. Load the data.table package and the nycflights13. As the nycflight13 package contains several datasets, we assign only those to objects we will later use.
+## Your first task is to convert each dataset to data.table:
 
-library(data.table)
-library(nycflights13)
+```{r}
+pacman::p_load(data.table, nycflights13)
 
 airports_data <- data.table(airports)
 flights_data <- data.table(flights)
@@ -45,63 +46,56 @@ flights_data [40:95]
 ```
 
 
-## 2a. Select all rows from flights_data that have an air time lower than 100, then rename air_time to flight_time by using the chaining operation and return it as a list:
+## 2a. Select all rows from flights_data that have an air time lower than 100, then order the flights to show those with the longest air time first (decreasing order):
 
 
 ```{r}
-flights_data[(air_time) <100][, .(flight_time = air_time)]
-
+flights_data[(air_time) < 100,][order(-air_time)]
 ```
 
 
-## 2b. From which origin where the most destination and arrival time of flights in flights_data? Return the answer as data.table (you might want to deal with the na-s from now :))
+## 2b. What is the most frequent arrival time? (You might want to exclude the NAs from now :))
 
 
 ```{r}
 clean_flights_data <- na.omit(flights_data)
-clean_flights_data[, .N, by = .(dest, arr_time)][order(-N)]
-
+clean_flights_data[, .N, by = .(arr_time)][order(-N)]
 ```
 
 
-## 3a. Add a new column calculating the average air_time for the flights from each origin:
+## 3a. Add a new column calculating the average air time for the flights from each origin:
 
 
 ```{r}
 clean_flights_data[, mean(air_time), by = .(origin)]
-
 ```
 
 
-## 3b. Using the %inbetween% operation, in planes_data check which manifacturer produces planes with a number of seats between 50-100, and then calculate the average of the seats these planes have: 
+## 3b. Using the %inbetween% operation, in planes_data check which manufacturer produces planes with a number of seats between 50-100, and then calculate the average number of seats across these planes:
 
 
 ```{r}
 planes_data[seats %between% c(50, 100), mean(seats), by = .(manufacturer)]
-
 ```
 
 
-## 4a. Find how many flights arrived on time / how many flights had the same arrival time as the scheduled one?
+## 4a. Find the number of flights that arrived on time?
 
 
 ```{r}
-
 clean_flights_data[, (sum(arr_time == sched_arr_time))]
-
 ```
 
 
-## 4b.Find the most frequent departure time from the carriers in flights_data (careful with na-s!):
+## 4b.Find the most frequent departure time from the carriers in flights_data (careful with NAs!):
 
 
 ```{r}
 frequent_dep<-clean_flights_data[, .N, by = .(carrier, dep_time)][order(N, decreasing = TRUE)]
-
 ```
 
 
-## 4c.Using .SD, find which carrier had the longest airtime at flights_data:
+## 4c.Using .SD, find which carrier had the longest air time in flights_data:
 
 
 ```{r}
