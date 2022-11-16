@@ -1,16 +1,9 @@
 ---
-title: "Data wrangling at scale with data.table"
+title:  <span style="color: red;">"Data wrangling at scale with data.table"</span>
 author: "Gresa Smolica & Amin Oueslati"
-output: 
+output:
   html_document:
-    toc: TRUE
-    df_print: paged
-    number_sections: FALSE
-    highlight: tango
-    theme: lumen
-    toc_depth: 3
-    toc_float: true
-    self_contained: false
+    css: "style.css"
 ---
 
 ```{r setup, include=FALSE}
@@ -26,7 +19,8 @@ pacman::p_load(data.table, learningtower, tidyverse)
 ```
 
 ### Before we start, let's go back to our claims regarding data.table's speed? You don't believe us? See for yourself!
-### The examplary data is extracted from "EDAV Fall 2021 Tues/Thurs Community Contributions
+
+The examplary data is extracted from "EDAV Fall 2021 Tues/Thurs Community Contributions
 
 ```{r}
 ## read a csv into a data.frame
@@ -54,9 +48,9 @@ end <- Sys.time()
 print(end - start)
 ```
 
-# Wrangling data at scale with data.table `r emo::ji(':wrench:')`
+### Wrangling data at scale with data.table 
 
-### To start getting into data.table and its operations, first we need to install and load the data.table package and the learningtower package - which provides easy access to a subset of variables from the PISA educational study for the years 2000-2008. The data collection is orchestrated by the OECD. In this workshop we will use both the student and school dataset. While the former contains data at the student-level, the latter has schools as its units of observation.
+To start getting into data.table and its operations, first we need to install and load the data.table package and the learningtower package - which provides easy access to a subset of variables from the PISA educational study for the years 2000-2008. The data collection is orchestrated by the OECD. In this workshop we will use both the student and school dataset. While the former contains data at the student-level, the latter has schools as its units of observation.
 
 ```{r}
 # load the student data for 2018
@@ -78,17 +72,17 @@ dim(student_data) # so our dataset has 612,004 rows/observations and 22 columns/
 dim(school_data) # 109,756 rows and 13 columns. Great!
 ```
 
-## Before we get into the wrangling, we should remind ourselves that data.table works through the following syntax:
+### Before we get into the wrangling, we should remind ourselves that data.table works through the following syntax:
 
-### DT[i, # where i shows "on which rows"
-###   j, # where j indicates "what to do"
-###   by] # where by means "grouped by what?"
+DT[i, # where i shows "on which rows"
+   j, # where j indicates "what to do"
+   by] # where by means "grouped by what?"
 
-## Now, let's wrangle that data! `r emo::ji(':computer:')`
+### Now, let's wrangle that data! 
 
-## Sub-setting rows: 
-### Tidyverse equivalent: filter
-### We subset rows by defining the corresponding condition in i
+### Sub-setting rows: 
+<span style="color: green;">Tidyverse equivalent: filter</span>
+We subset rows by defining the corresponding condition in i:
 
 ```{r}
 # sub-set all male students from Albania
@@ -99,7 +93,7 @@ male_albanian_students
 # but student_data[country == "ALB" & gender == "male",] would work just fine
 ```
 
-## Ordering rows in increasing or decreasing order | the power of (-) in data.table
+### Ordering rows in increasing or decreasing order | the power of (-) in data.table:
 
 ```{r}
 # order students in increasing order by their math score
@@ -113,8 +107,9 @@ decr_ord <- male_albanian_students[order(-math)]
 decr_ord[1:5]
 ```
 
-## Special operator %between% and %inrange%:
-### They are useful to subset rows conditional on a value falling within a certain range. The two operators accept both scalars and vectors. When used with a scalar, %between% and %inrange% perform identically However, both operators also accept vectors, in which case they operate differently.
+### Special operator %between% and %inrange%:
+
+They are useful to subset rows conditional on a value falling within a certain range. The two operators accept both scalars and vectors. When used with a scalar, %between% and %inrange% perform identically However, both operators also accept vectors, in which case they operate differently.
 
 ```{r}
 # when used with a scalar, %between% and %inrange% perform identically
@@ -135,9 +130,10 @@ inrange_vector <- male_albanian_students[math %inrange% list(science, read)]
 inrange_vector # 3,182 rows, all but one student from the dataset, who falls outside range
 ```
 
-## Extracting or modifying columns: 
-### Tidyverse equivalent: select
-### The logic is fairly straightforward. The main thing to keep in mind is, that if we don't wrap j, R will return a vector. If we want a data.table instead (most of the time this is what we want!) we need to wrap j, either with list() or with .(). Generally, you will see .() more commonly as its shorter. 
+### Extracting or modifying columns: 
+<span style="color: green;">Tidyverse equivalent: select</span>
+
+The logic is fairly straightforward. The main thing to keep in mind is, that if we don't wrap j, R will return a vector. If we want a data.table instead (most of the time this is what we want!) we need to wrap j, either with list() or with .(). Generally, you will see .() more commonly as it is shorter. 
 
 ```{r}
 # returning a vector
@@ -157,7 +153,7 @@ select_columns_short <- select_columns[, !c("read", "science")]
 select_columns_short
 ```
 
-## Selecting and renaming columns:
+### Selecting and renaming columns:
 
 ```{r}
 # selecting and renaming the columns for books and socioeconomic status
@@ -165,9 +161,10 @@ renamed_cols <- student_data[, .(books = book, socio_eco_status = escs)]
 head(renamed_cols)
 ```
 
-## Creating new columns: 
-### Tidyverse equivalent: mutate
-### The := assignment symbol allows us to create new columns through the modification/combination of one ore more columns. As part of the assignment we can optionally specify the name of the new column. If we don't specify a name, the default v1, v2... will be used.
+### Creating new columns: 
+<span style="color: green;">Tidyverse equivalent: mutate</span>
+
+The := assignment symbol allows us to create new columns through the modification/combination of one ore more columns. As part of the assignment we can optionally specify the name of the new column. If we don't specify a name, the default v1, v2... will be used.
 
 ```{r}
 # creating a new column which combines the reading and science scores
@@ -176,7 +173,7 @@ total_score <- male_albanian_students[,
 total_score
 ```
 
-## How about creating multiple columns?
+### How about creating multiple columns?
 
 ```{r}
 # creating multiple new columns
@@ -185,9 +182,10 @@ multiple_columns <- school_data[ , `:=` (
 multiple_columns
 ```
 
-## Descriptive analysis:
-### Tidyverse equivalent: summarise
-### We can perform any descriptive analysis on j, such as sum, maximum, minimum. Optionally, we can assign a name to the outcome variable.
+### Descriptive analysis:
+<span style="color: green;">Tidyverse equivalent: summarise</span>
+
+We can perform any descriptive analysis on j, such as sum, maximum, minimum. Optionally, we can assign a name to the outcome variable.
 
 ```{r}
 # first we drop na-s to make our lives easier
@@ -213,8 +211,9 @@ print(paste0("Number of schools with more enrolled girls than boys ", n_schools_
 subseting_computing <- clean_school_data[country== "FRA" & year == 2018, sum(total_students)]
 ```
 
-## Special symbol .N
-### .N returns the number of observations in the current group. .N is particularly powerful when combined with grouping in "by".
+### Special symbol .N
+
+.N returns the number of observations in the current group. .N is particularly powerful when combined with grouping in "by".
 
 ```{r}
 # we can use length() to get the number of observations
@@ -225,8 +224,9 @@ clean_school_data[country== "FRA" & year == 2018, .N]
 # we see that we get the same result, but with shorter code
 ```
 
-## Grouping with "by":
-### "By" allows us to perform operations by group. We are not limited to a single group, but can specify several groups:
+### Grouping with "by":
+
+"By" allows us to perform operations by group. We are not limited to a single group, but can specify several groups:
 
 ```{r}
 # getting the total number of schools by country
@@ -242,7 +242,8 @@ by_condition
 ```
 
 
-## Descriptive analysis continued:
+### Descriptive analysis continued:
+
 
 ```{r}
 # let's try to subset both in columns and rows:
@@ -259,10 +260,11 @@ all_combined
 # why are we seeing V1, V2?
 ```
 
-## Full-on data.table - Advanced operations: `r emo::ji(':rocket:')` 
-### What if we need to repeat an operation across many columns, like finding the mean? Is there a way to calculate the mean for several columns at once? 
-### Yes, we can subset each column with .SD, and then compute the mean with with lapply. .SD is particularly useful in the context of grouping, where it refers to each of these sub-data.tables, one-at-a-time. 
-### If we want to limit the column-wise computation to selected columns only (e.g., only numerical ones), we specify these through .SDcols. .SDcols also accepts a vector as input, which can be defined outside of data.table.  
+### Full-on data.table - Advanced operations:
+
+What if we need to repeat an operation across many columns, like finding the mean? Is there a way to calculate the mean for several columns at once? 
+Yes, we can subset each column with .SD, and then compute the mean with with lapply. .SD is particularly useful in the context of grouping, where it refers to each of these sub-data.tables, one-at-a-time. 
+If we want to limit the column-wise computation to selected columns only (e.g., only numerical ones), we specify these through .SDcols. .SDcols also accepts a vector as input, which can be defined outside of data.table.  
 
 ```{r}
 # repeated operations with .SD, .SDcols and lapply
@@ -275,9 +277,10 @@ selected_means <- clean_school_data[year == 2018,
 selected_means
 ```
 
-## Chaining:
-## Tidyverse equivalent: piping
-### To avoid saving intermediate results, data.table uses chaining. The syntax can be read as ‘result from first []-operation is used in subsequent []-operation’. Chaining vertically enhances readability.
+### Chaining:
+<span style="color: green;">Tidyverse equivalent: piping</span>
+
+To avoid saving intermediate results, data.table uses chaining. The syntax can be read as ‘result from first []-operation is used in subsequent []-operation’. Chaining vertically enhances readability.
 
 ### DT[...
 ###    ][...
